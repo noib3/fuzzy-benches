@@ -1,0 +1,13 @@
+[workspace]
+members = ["candidates", "telescope-fzf-native"]
+
+[package]
+name = "fuzzy-benches"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+candidates = { path = "./candidates" }
+criterion = "0.5"
+norm = { path = "../../nomad/norm", features = ["fzf-v2"] }
+telescope-fzf-native = { path = "./telescope-fzf-native" }

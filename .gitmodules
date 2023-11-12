@@ -1,0 +1,3 @@
+[submodule "telescope-fzf-native/telescope-fzf-native.nvim"]
+	path = telescope-fzf-native/telescope-fzf-native.nvim
+	url = https://github.com/nvim-telescope/telescope-fzf-native.nvim.git
