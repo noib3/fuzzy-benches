@@ -10,4 +10,5 @@ edition = "2021"
 candidates = { path = "./candidates" }
 criterion = "0.5"
 norm = { path = "../../nomad/norm", features = ["fzf-v2"] }
+nucleo-matcher = "0.2"
 telescope-fzf-native = { path = "./telescope-fzf-native" }
