@@ -80,6 +80,23 @@ mod norm_fzf_v1 {
     }
 
     fn bench(c: &mut Criterion, query: &str, candidates: &[&str], bench_name: &str) {
+        bench_inner(
+            c,
+            query,
+            candidates,
+            true,
+            &(bench_name.to_owned() + "-with-matched"),
+        );
+        bench_inner(c, query, candidates, false, bench_name);
+    }
+
+    fn bench_inner(
+        c: &mut Criterion,
+        query: &str,
+        candidates: &[&str],
+        with_matched: bool,
+        bench_name: &str,
+    ) {
         let mut group = c.benchmark_group("norm");
 
         group.throughput(Throughput::Elements(candidates.len() as u64));
@@ -87,7 +104,7 @@ mod norm_fzf_v1 {
         group.bench_function(BenchmarkId::new("fzf-v1", bench_name), |b| {
             let mut fzf = FzfV1::new()
                 .with_case_sensitivity(CaseSensitivity::Smart)
-                .with_matched_ranges(false);
+                .with_matched_ranges(with_matched);
 
             let mut parser = FzfParser::new();
 
@@ -144,6 +161,23 @@ mod norm_fzf_v2 {
     }
 
     fn bench(c: &mut Criterion, query: &str, candidates: &[&str], bench_name: &str) {
+        bench_inner(
+            c,
+            query,
+            candidates,
+            true,
+            &(bench_name.to_owned() + "-with-matched"),
+        );
+        bench_inner(c, query, candidates, false, bench_name);
+    }
+
+    fn bench_inner(
+        c: &mut Criterion,
+        query: &str,
+        candidates: &[&str],
+        with_matched: bool,
+        bench_name: &str,
+    ) {
         let mut group = c.benchmark_group("norm");
 
         group.throughput(Throughput::Elements(candidates.len() as u64));
@@ -151,7 +185,7 @@ mod norm_fzf_v2 {
         group.bench_function(BenchmarkId::new("fzf-v2", bench_name), |b| {
             let mut fzf = FzfV2::new()
                 .with_case_sensitivity(CaseSensitivity::Smart)
-                .with_matched_ranges(false);
+                .with_matched_ranges(with_matched);
 
             let mut parser = FzfParser::new();
 
@@ -208,6 +242,23 @@ mod nucleo {
     }
 
     fn bench(c: &mut Criterion, query: &str, candidates: &[&str], bench_name: &str) {
+        bench_inner(
+            c,
+            query,
+            candidates,
+            true,
+            &(bench_name.to_owned() + "-with-matched"),
+        );
+        bench_inner(c, query, candidates, false, bench_name);
+    }
+
+    fn bench_inner(
+        c: &mut Criterion,
+        query: &str,
+        candidates: &[&str],
+        with_matched: bool,
+        bench_name: &str,
+    ) {
         let mut group = c.benchmark_group("nucleo");
 
         group.throughput(Throughput::Elements(candidates.len() as u64));
@@ -223,10 +274,16 @@ mod nucleo {
 
             let mut buf = Vec::new();
 
+            let mut buf_indices = Vec::new();
+
             b.iter(|| {
                 for candidate in candidates {
                     let candidate = Utf32Str::new(candidate, &mut buf);
-                    let _ = query.score(candidate, &mut matcher);
+                    if with_matched {
+                        let _ = query.indices(candidate, &mut matcher, &mut buf_indices);
+                    } else {
+                        let _ = query.score(candidate, &mut matcher);
+                    }
                 }
             })
         });
@@ -281,6 +338,23 @@ mod telescope_fzf_native {
     }
 
     fn bench(c: &mut Criterion, query: &str, candidates: &[&CStr], bench_name: &str) {
+        bench_inner(
+            c,
+            query,
+            candidates,
+            true,
+            &(bench_name.to_owned() + "-with-matched"),
+        );
+        bench_inner(c, query, candidates, false, bench_name);
+    }
+
+    fn bench_inner(
+        c: &mut Criterion,
+        query: &str,
+        candidates: &[&CStr],
+        with_matched: bool,
+        bench_name: &str,
+    ) {
         let mut group = c.benchmark_group("telescope-fzf-native");
 
         group.throughput(Throughput::Elements(candidates.len() as u64));
@@ -292,7 +366,11 @@ mod telescope_fzf_native {
 
             b.iter(|| {
                 for candidate in candidates {
-                    let _ = fzf.score(&query, candidate);
+                    let score = fzf.score(&query, candidate);
+
+                    if with_matched && score > 1 {
+                        let _pos = fzf.positions(&query, candidate);
+                    }
                 }
             })
         });

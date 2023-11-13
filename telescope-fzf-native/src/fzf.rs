@@ -25,6 +25,13 @@ impl Fzf {
     pub fn score(&mut self, query: &FzfQuery, candidate: &CStr) -> i32 {
         unsafe { fzf_get_score(candidate.as_ptr(), query.pattern, self.slab) }
     }
+
+    #[inline]
+    pub fn positions(&mut self, query: &FzfQuery, candidate: &CStr) -> FzfPositions {
+        FzfPositions {
+            pos: { unsafe { fzf_get_positions(candidate.as_ptr(), query.pattern, self.slab) } },
+        }
+    }
 }
 
 impl Drop for Fzf {
@@ -55,5 +62,16 @@ impl Drop for FzfQuery {
     #[inline]
     fn drop(&mut self) {
         unsafe { fzf_free_pattern(self.pattern) }
+    }
+}
+
+pub struct FzfPositions {
+    pos: *mut fzf_position_t,
+}
+
+impl Drop for FzfPositions {
+    #[inline]
+    fn drop(&mut self) {
+        unsafe { fzf_free_positions(self.pos) }
     }
 }
