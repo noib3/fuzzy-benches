@@ -102,8 +102,9 @@ mod norm_fzf_v1 {
         group.throughput(Throughput::Elements(candidates.len() as u64));
 
         group.bench_function(BenchmarkId::new("fzf-v1", bench_name), |b| {
-            let mut fzf = FzfV1::new()
-                .with_case_sensitivity(CaseSensitivity::Smart)
+            let mut fzf = FzfV1::new();
+
+            fzf.with_case_sensitivity(CaseSensitivity::Smart)
                 .with_matched_ranges(with_matched);
 
             let mut parser = FzfParser::new();
@@ -183,8 +184,9 @@ mod norm_fzf_v2 {
         group.throughput(Throughput::Elements(candidates.len() as u64));
 
         group.bench_function(BenchmarkId::new("fzf-v2", bench_name), |b| {
-            let mut fzf = FzfV2::new()
-                .with_case_sensitivity(CaseSensitivity::Smart)
+            let mut fzf = FzfV2::new();
+
+            fzf.with_case_sensitivity(CaseSensitivity::Smart)
                 .with_matched_ranges(with_matched);
 
             let mut parser = FzfParser::new();
