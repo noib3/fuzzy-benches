@@ -101,21 +101,29 @@ mod norm_fzf_v1 {
 
         group.throughput(Throughput::Elements(candidates.len() as u64));
 
+        let mut fzf = FzfV1::new();
+
+        fzf.with_case_sensitivity(CaseSensitivity::Smart);
+
+        let mut parser = FzfParser::new();
+
+        let query = parser.parse(query);
+
         group.bench_function(BenchmarkId::new("fzf-v1", bench_name), |b| {
-            let mut fzf = FzfV1::new();
-
-            fzf.with_case_sensitivity(CaseSensitivity::Smart)
-                .with_matched_ranges(with_matched);
-
-            let mut parser = FzfParser::new();
-
-            let query = parser.parse(query);
-
-            b.iter(|| {
-                for candidate in candidates {
-                    let _ = fzf.distance(query, candidate);
-                }
-            })
+            if with_matched {
+                let mut ranges = Vec::new();
+                b.iter(|| {
+                    for candidate in candidates {
+                        let _ = fzf.distance_and_ranges(query, candidate, &mut ranges);
+                    }
+                })
+            } else {
+                b.iter(|| {
+                    for candidate in candidates {
+                        let _ = fzf.distance(query, candidate);
+                    }
+                })
+            }
         });
     }
 }
@@ -183,21 +191,29 @@ mod norm_fzf_v2 {
 
         group.throughput(Throughput::Elements(candidates.len() as u64));
 
+        let mut fzf = FzfV2::new();
+
+        fzf.with_case_sensitivity(CaseSensitivity::Smart);
+
+        let mut parser = FzfParser::new();
+
+        let query = parser.parse(query);
+
         group.bench_function(BenchmarkId::new("fzf-v2", bench_name), |b| {
-            let mut fzf = FzfV2::new();
-
-            fzf.with_case_sensitivity(CaseSensitivity::Smart)
-                .with_matched_ranges(with_matched);
-
-            let mut parser = FzfParser::new();
-
-            let query = parser.parse(query);
-
-            b.iter(|| {
-                for candidate in candidates {
-                    let _ = fzf.distance(query, candidate);
-                }
-            })
+            if with_matched {
+                let mut ranges = Vec::new();
+                b.iter(|| {
+                    for candidate in candidates {
+                        let _ = fzf.distance_and_ranges(query, candidate, &mut ranges);
+                    }
+                })
+            } else {
+                b.iter(|| {
+                    for candidate in candidates {
+                        let _ = fzf.distance(query, candidate);
+                    }
+                })
+            }
         });
     }
 }
@@ -265,29 +281,33 @@ mod nucleo {
 
         group.throughput(Throughput::Elements(candidates.len() as u64));
 
+        let mut matcher = {
+            let mut config = Config::DEFAULT;
+            config.normalize = false;
+            Matcher::new(config)
+        };
+
+        let query = Pattern::parse(query, CaseMatching::Smart);
+
+        let mut buf = Vec::new();
+
         group.bench_function(bench_name, |b| {
-            let mut matcher = {
-                let mut config = Config::DEFAULT;
-                config.normalize = false;
-                Matcher::new(config)
-            };
-
-            let query = Pattern::parse(query, CaseMatching::Smart);
-
-            let mut buf = Vec::new();
-
-            let mut buf_indices = Vec::new();
-
-            b.iter(|| {
-                for candidate in candidates {
-                    let candidate = Utf32Str::new(candidate, &mut buf);
-                    if with_matched {
+            if with_matched {
+                let mut buf_indices = Vec::new();
+                b.iter(|| {
+                    for candidate in candidates {
+                        let candidate = Utf32Str::new(candidate, &mut buf);
                         let _ = query.indices(candidate, &mut matcher, &mut buf_indices);
-                    } else {
+                    }
+                })
+            } else {
+                b.iter(|| {
+                    for candidate in candidates {
+                        let candidate = Utf32Str::new(candidate, &mut buf);
                         let _ = query.score(candidate, &mut matcher);
                     }
-                }
-            })
+                })
+            }
         });
     }
 }
