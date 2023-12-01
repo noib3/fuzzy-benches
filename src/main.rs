@@ -2,6 +2,7 @@ mod fuzzy_matcher;
 mod metric;
 mod norm;
 mod nucleo;
+mod sublime_fuzzy;
 mod telescope_fzf_native;
 
 use criterion::{criterion_group, criterion_main, Criterion};
@@ -89,6 +90,7 @@ fn fuzzy(c: &mut Criterion) {
     bench::<nucleo::Nucleo>(c);
     bench::<fuzzy_matcher::Clangd>(c);
     bench::<fuzzy_matcher::SkimV2>(c);
+    bench::<sublime_fuzzy::SublimeFuzzy>(c);
     bench::<telescope_fzf_native::TelescopeFzfNative>(c);
 }
 

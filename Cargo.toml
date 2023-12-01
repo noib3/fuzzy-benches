@@ -12,4 +12,5 @@ criterion = "0.5"
 fuzzy-matcher = "0.3"
 norm = { path = "../../nomad/norm", features = ["fzf-v1", "fzf-v2"] }
 nucleo-matcher = "0.2"
+sublime_fuzzy = "0.7"
 telescope-fzf-native = { path = "./telescope-fzf-native" }
