@@ -1,4 +1,4 @@
-use std::ffi::{c_char, CStr, CString};
+use core::ffi::CStr;
 
 use crate::bindings::*;
 
@@ -41,24 +41,26 @@ impl Drop for Fzf {
     }
 }
 
-pub struct FzfQuery {
-    _query: *mut c_char,
+pub struct FzfQuery<'a> {
+    _query: &'a CStr,
     pattern: *mut fzf_pattern_t,
 }
 
-impl FzfQuery {
+impl<'a> FzfQuery<'a> {
     #[inline]
-    pub fn parse(query: String) -> Self {
-        let query = CString::new(query).unwrap().into_raw();
+    pub fn parse(query: &'a CStr) -> Self {
+        let pattern = unsafe {
+            fzf_parse_pattern(fzf_case_types_CaseSmart, false, query.as_ptr() as _, true)
+        };
 
         Self {
-            pattern: unsafe { fzf_parse_pattern(fzf_case_types_CaseSmart, false, query, true) },
+            pattern,
             _query: query,
         }
     }
 }
 
-impl Drop for FzfQuery {
+impl Drop for FzfQuery<'_> {
     #[inline]
     fn drop(&mut self) {
         unsafe { fzf_free_pattern(self.pattern) }
