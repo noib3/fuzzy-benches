@@ -9,6 +9,7 @@ edition = "2021"
 [dependencies]
 candidates = { path = "./candidates" }
 criterion = "0.5"
+fuzzy-matcher = "0.3"
 norm = { path = "../../nomad/norm", features = ["fzf-v1", "fzf-v2"] }
 nucleo-matcher = "0.2"
 telescope-fzf-native = { path = "./telescope-fzf-native" }

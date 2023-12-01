@@ -1,3 +1,4 @@
+mod fuzzy_matcher;
 mod metric;
 mod norm;
 mod nucleo;
@@ -86,6 +87,8 @@ fn fuzzy(c: &mut Criterion) {
     bench::<norm::FzfV1>(c);
     bench::<norm::FzfV2>(c);
     bench::<nucleo::Nucleo>(c);
+    bench::<fuzzy_matcher::Clangd>(c);
+    bench::<fuzzy_matcher::SkimV2>(c);
     bench::<telescope_fzf_native::TelescopeFzfNative>(c);
 }
 
