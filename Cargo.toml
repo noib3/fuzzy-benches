@@ -10,7 +10,7 @@ edition = "2021"
 candidates = { path = "./candidates" }
 criterion = "0.5"
 fuzzy-matcher = "0.3"
-norm = { path = "../../nomad/norm", features = ["fzf-v1", "fzf-v2"] }
+norms = { version = "0.1", features = ["fzf-v1", "fzf-v2"] }
 # Contains a bug fix that hasn't yet been merged into master.
 nucleo-matcher = { git = "https://github.com/noib3/nucleo", branch = "fix-single-char-needles" }
 sublime_fuzzy = "0.7"
