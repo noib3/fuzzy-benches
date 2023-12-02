@@ -1,8 +1,9 @@
 use core::ops::Range;
 
 use norm::fzf::{self, FzfParser, FzfQuery};
+use norm::Metric;
 
-use crate::{Metric, Parser};
+use crate::Parser;
 
 impl Parser for FzfParser {
     type Query<'a> = FzfQuery<'a>;
@@ -18,7 +19,7 @@ pub struct FzfV1 {
     ranges_buf: Vec<Range<usize>>,
 }
 
-impl Metric for FzfV1 {
+impl crate::Metric for FzfV1 {
     const NAME: &'static str = "norm-fzf-v1";
 
     type Parser = FzfParser;
@@ -33,8 +34,6 @@ impl Metric for FzfV1 {
 
     #[inline(always)]
     fn distance(&mut self, query: FzfQuery, candidates: &[&str]) {
-        use norm::Metric;
-
         for candidate in candidates {
             let _ = self.v1.distance(query, candidate);
         }
@@ -42,8 +41,6 @@ impl Metric for FzfV1 {
 
     #[inline(always)]
     fn distance_and_matches(&mut self, query: FzfQuery, candidates: &[&str]) {
-        use norm::Metric;
-
         for candidate in candidates {
             let _ = self
                 .v1
@@ -57,7 +54,7 @@ pub struct FzfV2 {
     ranges_buf: Vec<Range<usize>>,
 }
 
-impl Metric for FzfV2 {
+impl crate::Metric for FzfV2 {
     const NAME: &'static str = "norm-fzf-v2";
 
     type Parser = FzfParser;
@@ -72,8 +69,6 @@ impl Metric for FzfV2 {
 
     #[inline(always)]
     fn distance(&mut self, query: FzfQuery, candidates: &[&str]) {
-        use norm::Metric;
-
         for candidate in candidates {
             let _ = self.v2.distance(query, candidate);
         }
@@ -81,8 +76,6 @@ impl Metric for FzfV2 {
 
     #[inline(always)]
     fn distance_and_matches(&mut self, query: FzfQuery, candidates: &[&str]) {
-        use norm::Metric;
-
         for candidate in candidates {
             let _ = self
                 .v2

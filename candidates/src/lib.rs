@@ -1,6 +1,6 @@
 #![allow(long_running_const_eval)]
 
-pub const CANDIDATES: &[&str] = &[
+pub const CANDIDATES: [&str; 95655] = [
 "magit-section-show-headings",
 "utf-16-le-dos",
 "pr-ps-file-preview",

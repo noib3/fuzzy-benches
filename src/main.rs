@@ -69,7 +69,14 @@ fn emacs<M: Metric>(c: &mut Criterion) {
     let query = "emacs";
     let candidates = candidates::CANDIDATES;
     let bench_name = "emacs";
-    metric::bench::<M>(c, query, candidates, bench_name);
+    metric::bench::<M>(c, query, &candidates, bench_name);
+}
+
+fn e_macs<M: Metric>(c: &mut Criterion) {
+    let query = "e";
+    let candidates = candidates::CANDIDATES;
+    let bench_name = "e-macs";
+    metric::bench::<M>(c, query, &candidates, bench_name);
 }
 
 fn bench<M: Metric>(c: &mut Criterion) {
@@ -82,6 +89,7 @@ fn bench<M: Metric>(c: &mut Criterion) {
     long_end::<M>(c);
 
     emacs::<M>(c);
+    e_macs::<M>(c);
 }
 
 fn fuzzy(c: &mut Criterion) {
